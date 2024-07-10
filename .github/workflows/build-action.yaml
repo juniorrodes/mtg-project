@@ -2,27 +2,27 @@ on: [push]
 
 name: Build and Deploy
 
-permissions:
-  id-token: write
-
 jobs:
     build-and-deploy:
         runs-on: self-hosted
+        env:
+            DOCKER_USER: ${{ vars.DOCKER_USER }}
+            DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
         steps:
-            - name: Run script
-              run: |
-                echo "Hello, World!"
-                docker run hello-world
-              shell: bash
-            # - name: login
-            #   uses: azure/login@v2
-            #   with:
-            #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
-            #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-            #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-            # - name: Azure CLI script
-            #   uses: azure/cli@v2
-            #   with:
-            #     azcliversion: latest
-            #     inlineScript: |
-            #         az account show
+          - name: Checkout code
+            uses: actions/checkout@v2
+          - name: Build application
+            
+            run: |
+              echo "Building application..."
+              chmod +x ./scripts/build-app.sh
+              ./scripts/build-app.sh 
+              echo "Build complete."
+            shell: bash
+          - name: Deploy application
+            run: |
+              echo "Deploying application..."
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker-compose up -d
+              echo "Deployment complete."
+            shell: bash
