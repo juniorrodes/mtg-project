@@ -4,7 +4,9 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"io"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/juniorrodes/mtg-project/pkg/mtg-api/models"
 )
@@ -30,11 +32,14 @@ func NewClient() *Client {
 	}
 }
 
-func (c *Client) GetCards() ([]models.Card, error) {
+func (c *Client) GetCards(pageSize int) ([]models.Card, error) {
 	req, err := http.NewRequest(http.MethodGet, MTGDomanin+"cards", nil)
 	if err != nil {
 		return nil, err
 	}
+	q := req.URL.Query()
+	q.Add("pageSize", strconv.Itoa(pageSize))
+	req.URL.RawQuery = q.Encode()
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
@@ -42,15 +47,18 @@ func (c *Client) GetCards() ([]models.Card, error) {
 	}
 
 	defer resp.Body.Close()
-	var cards []models.Card
+	var cards models.Cards
+	log.Println(resp.StatusCode)
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
+		log.Print(err)
 		return nil, err
 	}
 
 	err = json.Unmarshal(body, &cards)
 	if err != nil {
+		log.Print(err)
 		return nil, err
 	}
-	return cards, nil
+	return cards.Cards, nil
 }

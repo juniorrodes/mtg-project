@@ -1,0 +1,13 @@
+package components
+
+import "github.com/juniorrodes/mtg-project/pkg/mtg-api/models"
+
+templ CardView(cards []models.Card) {
+    for _, card := range cards {
+        <div class="card">
+            <img src={card.ImageUrl} alt={card.Name} />
+            <h2>{card.Name}</h2>
+            <p>{card.Text}</p>
+        </div>
+    }
+}

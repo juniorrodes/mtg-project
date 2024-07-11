@@ -9,10 +9,11 @@ templ Home() {
             <script src="https://unpkg.com/htmx.org@2.0.0"></script>
         </head>
         <body>
-            <div>
-              <h1>Welcome to the Home Page</h1>
-              <p>This is the home page of the website.</p>
-            </div>
+            <form hx-post="/api/search" hx-swap="innerHTML" hx-target="#output">
+                <input type="text" name="name" />
+                <button>Submit</button>
+            </form>
+            <div id="output"></div>
         </body>
     </html>
 }

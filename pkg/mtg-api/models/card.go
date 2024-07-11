@@ -1,10 +1,14 @@
 package models
 
+type Cards struct {
+	Cards []Card `json:"cards"`
+}
+
 type Card struct {
 	Id            string         `json:"id"`
 	Name          string         `json:"name"`
 	ManaCost      string         `json:"manaCost"`
-	Cmc           int            `json:"cmc"`
+	Cmc           float64        `json:"cmc"`
 	Colors        []string       `json:"colors"`
 	ColorIdentity []string       `json:"colorIdentity"`
 	Type          string         `json:"type"`
@@ -19,7 +23,7 @@ type Card struct {
 	Power         string         `json:"power"`
 	Toughness     string         `json:"toughness"`
 	Layout        string         `json:"layout"`
-	Multiverseid  int            `json:"multiverseid"`
+	Multiverseid  string         `json:"multiverseid"`
 	ImageUrl      string         `json:"imageUrl"`
 	Variations    []string       `json:"variations"`
 	Printings     []string       `json:"printings"`
