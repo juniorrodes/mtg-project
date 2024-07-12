@@ -25,7 +25,6 @@ jobs:
           - name: Deploy application
             run: |
               echo "Deploying application..."
-              docker login -u $DOCKER_USER -p $DOCKER_PASS
               docker-compose up -d
               echo "Deployment complete."
             shell: bash

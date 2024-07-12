@@ -1,21 +1,17 @@
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
       - master
 
 jobs:
   tag-image:
     runs-on: self-hosted
-    env:
-      DOCKER_USER: ${{ vars.DOCKER_USER }}
-      DOCKER_PASS: ${{ secrets.DOCKER_PASS }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Tag image
-        run: |
-          echo "Tagging image..."
-          chmod +x ./scripts/tag-image.sh
-          ./scripts/tag-image.sh
-          echo "Tagging complete."
-        shell: bash
+        uses: anotherNick/github-tag-action@v1.70.0
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          WITH_V: true
