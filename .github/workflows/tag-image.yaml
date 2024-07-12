@@ -4,6 +4,8 @@ on:
     branches:
       - main
 
+name: "Tag"
+
 jobs:
   tag-image:
     runs-on: self-hosted
