@@ -1,7 +1,7 @@
 on:
   push:
-    branches:
-      - main 
+    tags:
+      - 'v*'
 
 name: Build and Deploy
 
@@ -25,7 +25,6 @@ jobs:
           - name: Deploy application
             run: |
               echo "Deploying application..."
-              docker login -u $DOCKER_USER -p $DOCKER_PASS
               docker-compose up -d
               echo "Deployment complete."
             shell: bash
