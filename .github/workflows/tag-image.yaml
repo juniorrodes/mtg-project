@@ -12,6 +12,6 @@ jobs:
         uses: actions/checkout@v2
       - name: Tag image
         uses: anothrNick/github-tag-action@1.70.0
-        with:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
