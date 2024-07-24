@@ -2,7 +2,7 @@
 set -e
 
 TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-TAG=$(echo $TAG | sed 's/^v//') >> "$GITHUB_ENV"
+echo "TAG=$(echo $TAG | sed 's/^v//')" >> "$GITHUB_ENV"
 
 echo $TAG
 
