@@ -1,7 +1,8 @@
 on:
-  push:
-    tags:
-      - '*'
+  workflow_run:
+    workflows: ["Tag"]
+    types:
+      - completed
 
 name: Build and Deploy
 
