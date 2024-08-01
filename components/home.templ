@@ -1,5 +1,28 @@
 package components
 
+templ SearchForm() {
+    <form onsubmit="handleCardSearch(event)">
+        <input type="text" name="name" />
+        <fieldset>
+            <legend>Color search</legend>
+            {{ colors := []string{"black", "blue", "green", "red", "white"} }}
+            <div>
+                for _, v := range colors {
+                    <input type="checkbox" name="color_value" value={v} />
+                    <label for={v}>{v}</label>
+                }
+            </div>
+            <div>
+                <input type="radio" name="color_operand" value="and" />
+                <label for="and">AND</label>
+                <input type="radio" name="color_operand" value="or" />
+                <label for="or">OR</label>
+            </div>
+        </fieldset>
+        <button>Submit</button>
+    </form>
+}
+
 templ Home() {
     <!DOCTYPE html>
     <html lang="en">
@@ -7,13 +30,15 @@ templ Home() {
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <script src="https://unpkg.com/htmx.org@2.0.0"></script>
+            <script src="/static/search-form-handler.js"></script>
+            <link
+                rel="stylesheet"
+                href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+            >
         </head>
-        <body>
-            <form hx-post="/api/search" hx-swap="innerHTML" hx-target="#output">
-                <input type="text" name="name" />
-                <button>Submit</button>
-            </form>
+        <main class="container">
+            @SearchForm()
             <div id="output"></div>
-        </body>
+        </main>
     </html>
 }
