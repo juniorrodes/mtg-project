@@ -1,19 +1,15 @@
 package api
 
 import (
-	"github.com/juniorrodes/mtg-project/pkg/api/controller"
+	"github.com/juniorrodes/mtg-project/pkg/api/search"
 	"github.com/juniorrodes/mtg-project/pkg/api/static"
 	"github.com/juniorrodes/mtg-project/pkg/mtg-api"
 	"github.com/juniorrodes/mtg-project/pkg/router"
 )
 
 func Routes(r *router.Router) {
-	mtgClient := mtg.NewClient()
-
-	hc := NewHomeController()
-	csc := controller.NewCardSearchController(mtgClient)
-
-	r.Post("/api/search", csc.Search)
-    static.StaticContentProvider(r)
-	r.Get("/", hc.Index)
+	client := mtg.NewClient()
+	search.Search(r, client)
+	static.StaticContentProvider(r)
+	Index(r)
 }

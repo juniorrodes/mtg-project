@@ -1,0 +1,11 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+pre_cmd = ["templ generate"]
+cmd = "go build -o ./tmp/mtg pkg/main.go"
+bin = "tmp/mtg"
+include_ext = ["go", "templ"]
+exclude_dir = ["static"]
+exclude_regex = ["_templ\\.go"]
+exclude_unchanged = true
