@@ -1,0 +1,21 @@
+.search-form {
+    align-items: end;
+    align-content: center;
+}
+
+.page-size-selector {
+    grid-column: 9/9;
+}
+
+.search-field {
+    grid-column: 1/9;
+}
+
+.search-results {
+    position: absolute;
+}
+
+.result-cards {
+    width: 1rem;
+    height: auto;
+}

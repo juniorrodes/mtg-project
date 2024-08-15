@@ -4,13 +4,13 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
-	"strconv"
+	"net/url"
+	"slices"
 	"strings"
 
-	"github.com/juniorrodes/mtg-project/pkg/mtg-api/models"
+	"github.com/juniorrodes/mtg-project/pkg/models"
 )
 
 const (
@@ -18,20 +18,6 @@ const (
 	AND_OP     = "and"
 	OR_OP      = "or"
 )
-
-type nameParam struct {
-	Value string `form:"value"`
-}
-
-type colorParam struct {
-	Value   []string `form:"value"`
-	Operand string   `form:"operand"`
-}
-
-type searchParameters struct {
-	Name  *nameParam  `form:"name"`
-	Color *colorParam `form:"color"`
-}
 
 type Client struct {
 	httpClient *http.Client
@@ -50,53 +36,62 @@ func NewClient() *Client {
 	}
 }
 
-func (c *Client) GetCards(ctx context.Context, requestBytes []byte, pageSize int) ([]models.Card, error) {
+func (c *Client) GetCards(ctx context.Context, params models.SearchParameters) ([]models.Card, error) {
 	logger := ctx.Value("logger").(*log.Logger)
 	req, err := http.NewRequest(http.MethodGet, MTGDomanin+"cards", nil)
 	if err != nil {
 		logger.Println("failed with: ", err.Error())
 		return nil, err
 	}
-	var requestBody searchParameters
-	err = json.Unmarshal(requestBytes, &requestBody)
-	if err != nil {
-		logger.Println("failed with: ", err.Error())
-		return nil, err
-	}
-
-	q := req.URL.Query()
-	q.Add("pageSize", strconv.Itoa(pageSize))
-	q.Add("name", requestBody.Name.Value)
-	if requestBody.Color != nil {
-		if requestBody.Color.Operand == OR_OP {
-			q.Add("colors", strings.Join(requestBody.Color.Value, "|"))
-		} else {
-			q.Add("colors", strings.Join(requestBody.Color.Value, ","))
-		}
-	}
-
-	req.URL.RawQuery = q.Encode()
-
-	logger.Println(req.URL.RawQuery)
+	setQueryParams(req.URL, params)
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
-
 	defer resp.Body.Close()
+
 	var cards models.Cards
-	body, err := io.ReadAll(resp.Body)
+	err = json.NewDecoder(resp.Body).Decode(&cards)
 	if err != nil {
 		log.Print(err)
 		return nil, err
 	}
 
-	err = json.Unmarshal(body, &cards)
-	if err != nil {
-		log.Print(err)
-		return nil, err
-	}
-	logger.Println(cards)
+	removeDuplicates(&cards)
+	removeCardsWithNoForeignNames(&cards)
+
 	return cards.Cards, nil
+}
+
+func removeCardsWithNoForeignNames(cards *models.Cards) {
+	cards.Cards = slices.DeleteFunc(cards.Cards, func(card models.Card) bool {
+		return len(card.ForeignNames) < 1
+	})
+}
+
+func removeDuplicates(cards *models.Cards) {
+	for _, c := range cards.Cards {
+		for _, variation := range c.Variations {
+			cards.Cards = slices.DeleteFunc(cards.Cards, func(card models.Card) bool {
+				return card.Id == variation
+			})
+		}
+	}
+}
+
+func setQueryParams(requestURL *url.URL, params models.SearchParameters) {
+	q := requestURL.Query()
+	q.Add("pageSize", params.PageSize.Value)
+	q.Add("name", params.Name.Value)
+	if params.Color != nil {
+		if params.Color.Operand == OR_OP {
+			q.Add("colors", strings.Join(params.Color.Value, "|"))
+		} else {
+			q.Add("colors", strings.Join(params.Color.Value, ","))
+		}
+	}
+
+	requestURL.RawQuery = q.Encode()
+
 }

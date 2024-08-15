@@ -7,5 +7,5 @@ import (
 
 func Search(r *router.Router, client cards.MtgClient) {
 	searcher := cards.NewCardSearcher(client)
-	r.Post("/api/search", searcher.RenderSearchResults)
+	r.Post("/api/search", searcher.RenderCardView)
 }

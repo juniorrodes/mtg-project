@@ -28,7 +28,6 @@ func NewRouter() *Router {
 
 func (r *Router) Get(path string, handler http.HandlerFunc) {
 	path = fmt.Sprintf("%s %s", http.MethodGet, path)
-
 	r.mux.HandleFunc(path, LoggerInjector(handler, r.logger))
 }
 
@@ -43,7 +42,7 @@ func (r *Router) ListenAndServe(addr string) error {
 		Handler: r.mux,
 	}
 
-	log.Printf("Server listening on %s", addr)
+	r.logger.Printf("Server listening on %s", addr)
 
 	return server.ListenAndServe()
 }

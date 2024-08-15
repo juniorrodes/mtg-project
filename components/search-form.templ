@@ -1,0 +1,69 @@
+package components
+
+var colors = map[string]string{
+    "B": "black",
+    "U": "blue",
+    "G": "green",
+    "R": "red",
+    "W": "white",
+}
+
+templ SearchForm() {
+    <form hx-ext="submitjson" hx-target="#output" hx-post="/api/search">
+        <div class="grid search-form">
+            <fieldset role="search" style="grid-column: 1/9">
+                <input type="search" name="name" placeholder="Search" />
+                <button type="submit">Search</button>
+            </fieldset> 
+            <div class="page-size-selector">
+                <label for="pageSize">Page Size</label>
+                <select name="pageSize">
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="40">40</option>
+                </select>
+            </div>
+        </div>
+    </form>
+    <!-- <div class="search-results">
+        <article>
+            <img src="http://gatherer.wizards.com/Handlers/Image.ashx?multiverseid=654951&type=card" style="width: 80px; height: auto" />
+        </article>
+    </div> -->
+    <button class="outline" onclick="openModal()">Advance search</button>
+    <dialog class="advance-search">
+        <form hx-ext="submitjson" hx-target="#output" hx-post="/api/search">
+            <div class="grid search-form">
+                <fieldset role="search" style="grid-column: 1/7">
+                    <input type="search" name="name" placeholder="Search" />
+                </fieldset> 
+                <div class="grid-column: 8/9">
+                    <label for="pageSize">Page Size</label>
+                    <select name="pageSize">
+                        <option value="10">10</option>
+                        <option value="20">20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                    </select>
+                </div>
+            </div>
+            <fieldset role="group">
+                <legend>Color search</legend>
+                <div>
+                    for k, v := range colors {
+                        <input type="checkbox" name="color_value" value={k} />
+                        <label for={k}>{v}</label>
+                    }
+                </div>
+                <div>
+                    <input type="radio" name="color_operand" value="and" />
+                    <label for="and">AND</label>
+                    <input type="radio" name="color_operand" value="or" />
+                    <label for="or">OR</label>
+                </div>
+            </fieldset>
+            <button>Submit</button>
+        </form>
+    </dialog>
+}

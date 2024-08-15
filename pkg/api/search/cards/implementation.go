@@ -2,16 +2,17 @@ package cards
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"log"
 	"net/http"
 
 	"github.com/juniorrodes/mtg-project/components"
-	"github.com/juniorrodes/mtg-project/pkg/mtg-api/models"
+	"github.com/juniorrodes/mtg-project/pkg/models"
 )
 
 type MtgClient interface {
-	GetCards(ctx context.Context, requestBytes []byte, pageSize int) ([]models.Card, error)
+	GetCards(ctx context.Context, params models.SearchParameters) ([]models.Card, error)
 }
 
 type cardSearcher struct {
@@ -24,7 +25,7 @@ func NewCardSearcher(client MtgClient) *cardSearcher {
 	}
 }
 
-func (c *cardSearcher) RenderSearchResults(w http.ResponseWriter, r *http.Request) {
+func (c *cardSearcher) RenderCardView(w http.ResponseWriter, r *http.Request) {
 	logger := r.Context().Value("logger").(*log.Logger)
 
 	requestBytes, err := io.ReadAll(r.Body)
@@ -33,8 +34,10 @@ func (c *cardSearcher) RenderSearchResults(w http.ResponseWriter, r *http.Reques
 		w.WriteHeader(http.StatusBadRequest)
 		components.FailState(err.Error()).Render(r.Context(), w)
 	}
+	var params models.SearchParameters
+	err = json.Unmarshal(requestBytes, &params)
 
-	cards, err := c.mtgClient.GetCards(r.Context(), requestBytes, 10)
+	cards, err := c.mtgClient.GetCards(r.Context(), params)
 	if err != nil {
 		logger.Println("failed with: ", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
@@ -42,5 +45,6 @@ func (c *cardSearcher) RenderSearchResults(w http.ResponseWriter, r *http.Reques
 	}
 
 	components.CardView(cards).Render(r.Context(), w)
-	w.WriteHeader(http.StatusOK)
 }
+
+func RenderSearchCards(w http.ResponseWriter)

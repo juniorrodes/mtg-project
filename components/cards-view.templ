@@ -1,6 +1,8 @@
 package components
 
-import "github.com/juniorrodes/mtg-project/pkg/mtg-api/models"
+import (
+    "github.com/juniorrodes/mtg-project/pkg/models"
+)
 
 templ CardView(cards []models.Card) {
     for _, card := range cards {

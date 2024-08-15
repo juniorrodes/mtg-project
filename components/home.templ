@@ -1,35 +1,5 @@
 package components
 
-var colors = []string{"B", "U", "G", "R", "W"}
-
-templ SearchForm() {
-    <form hx-ext="submitjson" hx-target="#output" hx-post="/api/search">
-        <input type="search" name="name" placeholder="search" />
-    </form>
-    <button class="outline" onclick="openModal()">Advance search</button>
-    <dialog class="advance-search">
-        <form hx-ext="submitjson" hx-target="#output" hx-post="/api/search">
-            <input type="text" name="name" />
-            <fieldset>
-                <legend>Color search</legend>
-                <div>
-                    for _, v := range colors {
-                        <input type="checkbox" name="color_value" value={v} />
-                        <label for={v}>{v}</label>
-                    }
-                </div>
-                <div>
-                    <input type="radio" name="color_operand" value="and" />
-                    <label for="and">AND</label>
-                    <input type="radio" name="color_operand" value="or" />
-                    <label for="or">OR</label>
-                </div>
-            </fieldset>
-            <button>Submit</button>
-        </form>
-    </dialog>
-}
-
 templ Home() {
     <!DOCTYPE html>
     <html lang="en">
@@ -38,6 +8,7 @@ templ Home() {
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <script src="https://unpkg.com/htmx.org@2.0.0"></script>
             <script src="/static/handlers.js"></script>
+            <link rel="stylesheet" href="static/css/styles.css"></link>
             <link
                 rel="stylesheet"
                 href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
