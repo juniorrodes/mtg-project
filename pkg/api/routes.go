@@ -1,17 +1,24 @@
 package api
 
 import (
-	"github.com/juniorrodes/mtg-project/pkg/api/controller"
-	"github.com/juniorrodes/mtg-project/pkg/mtg-api"
+	"log"
+	"net/http"
+
+	"github.com/juniorrodes/mtg-project/pkg/controller"
 	"github.com/juniorrodes/mtg-project/pkg/router"
+	scryfallclient "github.com/juniorrodes/mtg-project/pkg/scryfall-client"
 )
 
-func Routes(r *router.Router) {
-	mtgClient := mtg.NewClient()
+func Routes(r *router.Router, logger *log.Logger) {
+	log.Println("Initializing routes ...")
 
-	hc := NewHomeController()
-	csc := controller.NewCardSearchController(mtgClient)
+	scryfallClient := scryfallclient.NewClient(logger)
 
-	r.Post("/api/search", csc.Search)
-	r.Get("/", hc.Index)
+	cardsController := controller.NewCardsController(logger, scryfallClient)
+	homeController := controller.NewHomeController(logger)
+	fs := http.FileServer(http.Dir("static"))
+
+	r.Get("/", homeController.RenderHomePage)
+	r.Get("/static/", http.StripPrefix("/static/", fs).ServeHTTP)
+	r.Get("/search", cardsController.Search)
 }

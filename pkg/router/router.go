@@ -7,13 +7,15 @@ import (
 )
 
 type Router struct {
-	mux *http.ServeMux
+	logger *log.Logger
+	mux    *http.ServeMux
 }
 
-func NewRouter() *Router {
+func NewRouter(logger *log.Logger) *Router {
 	mux := http.NewServeMux()
 	return &Router{
-		mux: mux,
+		logger: logger,
+		mux:    mux,
 	}
 }
 
@@ -33,7 +35,7 @@ func (r *Router) ListenAndServe(addr string) error {
 		Handler: r.mux,
 	}
 
-	log.Printf("Server listening on %s", addr)
+	r.logger.Printf("Server listening on %s", addr)
 
 	return server.ListenAndServe()
 }

@@ -1,0 +1,10 @@
+package forms
+
+templ NameSearch() {
+    <form hx-get="/search" hx-push-url="true" hx-target="#container" hx-swap="innerHTML">
+        <label for="search">Card name:</label>
+        <input type="text" id="search" name="q" placeholder="Search...">
+        <button class="bg-button-bg-primary rounded-sm border-button-bg-secondary p-2" type="submit">Search</button>
+    </form>
+    <a href="/advanced">Advanced search</a>
+}

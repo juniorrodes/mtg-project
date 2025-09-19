@@ -1,0 +1,32 @@
+package cardView
+
+import (
+    "github.com/juniorrodes/mtg-project/pkg/scryfall-client/models"
+	"github.com/juniorrodes/mtg-project/components/forms"
+	"github.com/juniorrodes/mtg-project/components/layout"
+)
+
+templ CardView() {
+    @layout.Layout(
+        CardsGrid(ctx.Value("cards").([]models.Cards)),
+    )
+}
+
+templ CardsGrid(cards []models.Cards) {
+    <div class="flex flex-col">
+        <div class="flex flex-row">
+            @forms.NameSearch()
+        </div>
+            <div class="grid gap-2 grid-cols-3 grow flex-wrap">
+                for _, card := range cards {
+                    @cardView(card)
+                }
+            </div>
+    </div>
+}
+
+templ cardView(card models.Cards) {
+    <div>
+        <img src={card.ImageUris.BorderCrop} alt={"Image of the card: "+card.Name} />
+    </div>
+}

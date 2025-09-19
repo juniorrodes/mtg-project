@@ -1,0 +1,11 @@
+package cardView
+
+import "github.com/juniorrodes/mtg-project/pkg/scryfall-client/models"
+
+templ CardError(err models.ScryfallError) {
+    <p>{err.Code}</p>
+    <p>Failed with: {err.Details}</p>
+    for _, w := range err.Warnings {
+        <p>{w}</p>
+    }
+}
